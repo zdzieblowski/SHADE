@@ -157,10 +157,14 @@ void main() {
 }
 `;
 
-let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', algorithm3D: glsl});
+let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', fragment_glsl: glsl});
 
 example.algorithm2D = function() {
     this.context2D.fillStyle = 'rgba(255,0,0,.5)';
     this.context2D.fillRect(this.mouseX-1, 0, 2, this.canvas.height);
     this.context2D.fillRect(0, this.mouseY-1, this.canvas.width, 2);
+}
+
+example.algorithm3D = function() {
+    
 }

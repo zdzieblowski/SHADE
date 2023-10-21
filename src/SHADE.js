@@ -5,7 +5,7 @@ const config_defaults = {
     alpha: true,
     antialias: false,
 
-    algorithm3D: ``,
+    fragment_glsl: ``,
 
     vertex_array: [ -1, -1,  1, -1,  1,  1, -1,  1, -1, -1,  1,  1 ],
     vertex_glsl: `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`,
@@ -14,7 +14,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.0';
+    version = '0.3.1';
 
     mouseX = 0;
     mouseY = 0;
@@ -41,7 +41,7 @@ export default class SHADE {
 
         // 
 
-        this.program = this.#createProgram(this.#createShader(this.context3D.VERTEX_SHADER, this.config.vertex_glsl), this.#createShader(this.context3D.FRAGMENT_SHADER, this.config.algorithm3D));
+        this.program = this.#createProgram(this.#createShader(this.context3D.VERTEX_SHADER, this.config.vertex_glsl), this.#createShader(this.context3D.FRAGMENT_SHADER, this.config.fragment_glsl));
 
         this.context3D.useProgram(this.program);
 
@@ -138,13 +138,14 @@ export default class SHADE {
 
         this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
         this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
-        this.context3D.uniform1f(this.ST_currentTime, this.time*0.001);
+        this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
 
         this.context3D.drawArrays(this.context3D.TRIANGLES, 0, this.config.vertex_array.length/this.vertexDimensions);
 
         // 
 
         this.algorithm2D();
+        this.algorithm3D();
 
         // 
         
@@ -157,5 +158,8 @@ export default class SHADE {
     // public methods
 
     algorithm2D() {
+    }
+
+    algorithm3D() {
     }
 }
