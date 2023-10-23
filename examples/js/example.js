@@ -1,7 +1,7 @@
 import SHADE from "../../src/SHADE.js";
 
-let vertex_array = [ -1, -1,  1, -1,  1,  1, -1,  1, -1, -1,  1,  1 ];
-let vertex_dimensions = 2;
+let vertex_array = [ -1, -1,  0,  1, -1,  0,  1,  1,  0, -1,  1,  0, -1, -1,  0,  1,  1,  0 ];
+let vertex_dimensions = 3;
 
 let vertex_glsl = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
 
@@ -150,26 +150,16 @@ example.loop2D = function() {
 
 example.setup3D = function() {
     this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, vertex_glsl), this.createShader(this.context3D.FRAGMENT_SHADER, fragment_glsl));
-
     this.context3D.useProgram(this.program);
 
     this.vertexArray = this.context3D.getAttribLocation(this.program, '_vertices');
-
-    this.ST_canvasResolution = this.context3D.getUniformLocation(this.program, 'iResolution');
-    this.ST_mousePosition = this.context3D.getUniformLocation(this.program, 'iMouse');
-    this.ST_currentTime = this.context3D.getUniformLocation(this.program, 'iTime');
-
     this.context3D.bindBuffer(this.context3D.ARRAY_BUFFER, this.context3D.createBuffer());
     this.context3D.bufferData(this.context3D.ARRAY_BUFFER, new Float32Array(vertex_array), this.context3D.STATIC_DRAW);
     this.context3D.enableVertexAttribArray(this.vertexArray);
-    this.context3D.vertexAttribPointer(this.vertexArray, vertex_dimensions, this.context3D.FLOAT, false, 0, 0);    
+    this.context3D.vertexAttribPointer(this.vertexArray, vertex_dimensions, this.context3D.FLOAT, false, 0, 0);  
 }
 
 example.loop3D = function() {
-    this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
-    this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
-    this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
-
     this.context3D.drawArrays(this.context3D.TRIANGLES, 0, vertex_array.length/vertex_dimensions);
 }
 

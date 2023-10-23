@@ -15,7 +15,6 @@ export default class SHADE {
     mouseY = 0;
 
     time = performance.now();
-    bcr;
     
     constructor(canvas_element, config_override){
         this.config = {...config_defaults, ...config_override};
@@ -72,6 +71,10 @@ export default class SHADE {
         this.time = performance.now();        
 
         this.loop2D();
+
+        this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
+        this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
+        this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
         this.loop3D();
 
         this.context.drawImage(this.canvas3D,0,0);
@@ -118,7 +121,11 @@ export default class SHADE {
     
     run() {
         this.setup2D();
+
         this.setup3D();
+        this.ST_canvasResolution = this.context3D.getUniformLocation(this.program, 'iResolution');
+        this.ST_mousePosition = this.context3D.getUniformLocation(this.program, 'iMouse');
+        this.ST_currentTime = this.context3D.getUniformLocation(this.program, 'iTime');
 
         this.#resizeCanvas();
         setTimeout(() => { this.#loopRenderer(); }, 100);
