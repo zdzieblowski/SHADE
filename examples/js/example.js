@@ -1,34 +1,18 @@
 import SHADE from "../../src/SHADE.js";
 
-let glsl = `
+let vertex_array = [ -1, -1,  1, -1,  1,  1, -1,  1, -1, -1,  1,  1 ];
+let vertex_dimensions = 2;
+
+let vertex_glsl = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
+
+let fragment_glsl = `
 precision highp float;
 
 uniform vec2 iResolution;
 uniform vec2 iMouse;
 uniform float iTime;
 
-// Protean clouds by nimitz (twitter: @stormoid)
 // https://www.shadertoy.com/view/3l23Rh
-// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
-// Contact the author for other licensing options
-
-/*
-Technical details:
-
-The main volume noise is generated from a deformed periodic grid, which can produce
-a large range of noise-like patterns at very cheap evalutation cost. Allowing for multiple
-fetches of volume gradient computation for improved lighting.
-
-To further accelerate marching, since the volume is smooth, more than half the density
-information isn't used to rendering or shading but only as an underlying volume	distance to 
-determine dynamic step size, by carefully selecting an equation	(polynomial for speed) to 
-step as a function of overall density (not necessarialy rendered) the visual results can be 
-the	same as a naive implementation with ~40% increase in rendering performance.
-
-Since the dynamic marching step size is even less uniform due to steps not being rendered at all
-the fog is evaluated as the difference of the fog integral at each rendered step.
-
-*/
 
 mat2 rot(in float a){float c = cos(a), s = sin(a);return mat2(c,s,-s,c);}
 const mat3 m3 = mat3(0.33338, 0.56034, -0.71817, -0.87887, 0.32651, -0.15323, 0.15162, 0.69596, 0.61339)*1.93;
@@ -106,7 +90,6 @@ float getsat(vec3 c)
     return (ma - mi)/(ma+ 1e-7);
 }
 
-//from my "Will it blend" shader (https://www.shadertoy.com/view/lsdGzN)
 vec3 iLerp(in vec3 a, in vec3 b, in float x)
 {
     vec3 ic = mix(a, b, x) + vec3(1e-6,0.,0.);
@@ -157,14 +140,37 @@ void main() {
 }
 `;
 
-let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', fragment_glsl: glsl});
+let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight'});
 
-example.algorithm2D = function() {
-    this.context2D.fillStyle = 'rgba(255,0,0,.5)';
-    this.context2D.fillRect(this.mouseX-1, 0, 2, this.canvas.height);
-    this.context2D.fillRect(0, this.mouseY-1, this.canvas.width, 2);
+example.loop2D = function() {
+    this.context2D.fillStyle = 'rgba(0,0,0,.25)';
+    this.context2D.fillRect(this.mouseX, 0, 1, this.canvas.height);
+    this.context2D.fillRect(0, this.mouseY, this.canvas.width, 1);
 }
 
-example.algorithm3D = function() {
-    
+example.setup3D = function() {
+    this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, vertex_glsl), this.createShader(this.context3D.FRAGMENT_SHADER, fragment_glsl));
+
+    this.context3D.useProgram(this.program);
+
+    this.vertexArray = this.context3D.getAttribLocation(this.program, '_vertices');
+
+    this.ST_canvasResolution = this.context3D.getUniformLocation(this.program, 'iResolution');
+    this.ST_mousePosition = this.context3D.getUniformLocation(this.program, 'iMouse');
+    this.ST_currentTime = this.context3D.getUniformLocation(this.program, 'iTime');
+
+    this.context3D.bindBuffer(this.context3D.ARRAY_BUFFER, this.context3D.createBuffer());
+    this.context3D.bufferData(this.context3D.ARRAY_BUFFER, new Float32Array(vertex_array), this.context3D.STATIC_DRAW);
+    this.context3D.enableVertexAttribArray(this.vertexArray);
+    this.context3D.vertexAttribPointer(this.vertexArray, vertex_dimensions, this.context3D.FLOAT, false, 0, 0);    
 }
+
+example.loop3D = function() {
+    this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
+    this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
+    this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
+
+    this.context3D.drawArrays(this.context3D.TRIANGLES, 0, vertex_array.length/vertex_dimensions);
+}
+
+example.run();
