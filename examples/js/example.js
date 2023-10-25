@@ -2,7 +2,7 @@ import SHADE from "../../src/SHADE.js";
 
 let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight'});
 
-example.fragment_glsl = `
+example.fragment_shader = `
     precision highp float;
 
     uniform vec2 iResolution;

@@ -17,8 +17,8 @@ export default class SHADE {
 
     time = performance.now();
 
-    fragment_glsl = ``;
-    vertex_glsl = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
+    fragmen_shader = ``;
+    vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
     
     constructor(canvas_element, config_override){
         this.config = {...config_defaults, ...config_override};
@@ -58,7 +58,7 @@ export default class SHADE {
         this.loop2D = function() {}
 
         this.once3D = function() {
-            this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_glsl), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_glsl));
+            this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
             this.context3D.useProgram(this.program);
 
             this.vertexData = [ -1, -1, +1, -1, +1, +1, -1, +1, -1, -1, +1, +1 ];
