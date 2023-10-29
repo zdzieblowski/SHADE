@@ -19,8 +19,6 @@ export default class SHADE {
 
     time = performance.now();
 
-    o2E = true;
-    o3E = true;
     l2E = true;
     l3E = true;
 
@@ -199,8 +197,6 @@ export default class SHADE {
 
         //
 
-        this.o2E = this.once2D.toString() == this.empty.toString();
-        this.o3E = this.once3D.toString() == this.empty.toString();
         this.l2E = this.loop2D.toString() == this.empty.toString();
         this.l3E = this.loop3D.toString() == this.empty.toString();
 
