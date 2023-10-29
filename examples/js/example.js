@@ -1,6 +1,6 @@
 import SHADE from "../../src/SHADE.js";
 
-let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', is_shader_toy: true});
+let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true});
 
 //
 

@@ -5,17 +5,19 @@ const config_defaults = {
     alpha: true,
     antialias: false,
 
-    is_shader_toy: false,
+    is_shadertoy: false,
 
     debug: false
 };
 
 export default class SHADE {
 
-    version = '0.3.5';
+    version = '0.3.6';
 
     mouseX = 0;
     mouseY = 0;
+    mouseZ = 0;
+    mouseW = 0;
 
     time = performance.now();
 
@@ -44,13 +46,20 @@ export default class SHADE {
         // 
 
         this.canvas.onmousemove = event => {
-            this.mouseX = event.clientX - this.bcr.left;
-            this.mouseY = event.clientY - this.bcr.top;
+            if(!this.config.is_shadertoy || this.mouseZ != 0){
+                this.mouseX = event.clientX - this.bcr.left;
+                this.mouseY = event.clientY - this.bcr.top;
+            }
         }
 
-        this.canvas.ontouchmove = event => {
-            this.mouseX = event.changedTouches[0].clientX - this.bcr.left;
-            this.mouseY = event.changedTouches[0].clientY - this.bcr.top;
+        this.canvas.onmousedown = event => {
+            this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
+            this.mouseY = this.mouseW = event.clientY - this.bcr.top;
+        }
+
+        this.canvas.onmouseup = event => {
+            this.mouseZ = 0;
+            this.mouseW = 0;
         }
 
         window.onresize = event => { this.#resizeCanvas(); }
@@ -63,7 +72,7 @@ export default class SHADE {
             this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
             this.context3D.useProgram(this.program);
 
-            this.vertexData = [ -1, -1, +1, -1, +1, +1, -1, +1, -1, -1, +1, +1 ];
+            this.vertexData = [ -1,-1,+1,-1,+1,+1,-1,+1,-1,-1,+1,+1 ];
 
             this.vertexArray = this.context3D.getAttribLocation(this.program, '_vertices');
             this.context3D.bindBuffer(this.context3D.ARRAY_BUFFER, this.context3D.createBuffer());
@@ -76,8 +85,8 @@ export default class SHADE {
         }
 
         this.ST_loop3D = function() {
-            this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
-            this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
+            this.context3D.uniform3f(this.ST_canvasResolution, this.canvas.width, this.canvas.height, 1.0);
+            this.context3D.uniform4f(this.ST_mousePosition, this.mouseX, this.mouseY, this.mouseZ, this.mouseW);
             this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
             this.context3D.drawArrays(this.context3D.TRIANGLES, 0, this.vertexData.length/2);
         }
@@ -178,7 +187,7 @@ export default class SHADE {
 
         //
 
-        if(this.config.is_shader_toy == true) {
+        if(this.config.is_shadertoy == true) {
 
             this.vertex_shader = this.ST_vertex_shader;
             this.once3D = this.ST_once3D;
@@ -186,8 +195,8 @@ export default class SHADE {
 
             this.fragment_shader = `
                 precision highp float;
-                uniform vec2 iResolution;
-                uniform vec2 iMouse;
+                uniform vec3 iResolution;
+                uniform vec4 iMouse;
                 uniform float iTime;`
             + this.fragment_shader + `
                 void main() {
