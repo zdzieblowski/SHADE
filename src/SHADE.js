@@ -10,15 +10,21 @@ const config_defaults = {
 
 export default class SHADE {
 
-    version = '0.3.3';
+    version = '0.3.4';
 
     mouseX = 0;
     mouseY = 0;
 
     time = performance.now();
 
-    fragmen_shader = ``;
-    vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
+    //
+
+    ST_vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
+    
+    //
+
+    fragment_shader = ``;
+    vertex_shader = ``;
     
     constructor(canvas_element, config_override){
         this.config = {...config_defaults, ...config_override};
@@ -52,12 +58,7 @@ export default class SHADE {
 
         // 
 
-        this.empty = function() {}
-    
-        this.once2D = function() {}        
-        this.loop2D = function() {}
-
-        this.once3D = function() {
+        this.ST_once3D = function() {
             this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
             this.context3D.useProgram(this.program);
 
@@ -72,12 +73,23 @@ export default class SHADE {
             this.ST_mousePosition = this.context3D.getUniformLocation(this.program, 'iMouse');
             this.ST_currentTime = this.context3D.getUniformLocation(this.program, 'iTime');
         }
-        this.loop3D = function() {
+
+        this.ST_loop3D = function() {
             this.context3D.uniform2f(this.ST_canvasResolution, this.canvas.width, this.canvas.height);
             this.context3D.uniform2f(this.ST_mousePosition, this.mouseX, this.mouseY);
             this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
             this.context3D.drawArrays(this.context3D.TRIANGLES, 0, this.vertexData.length/2);
         }
+
+        //
+
+        this.empty = function() {}
+    
+        this.once2D = function() {}        
+        this.loop2D = function() {}
+
+        this.once3D = function() {}
+        this.loop3D = function() {}
     }
 
     //
@@ -117,8 +129,8 @@ export default class SHADE {
 
         this.time = performance.now();        
 
-        this.context.drawImage(this.canvas3D,0,0);
-        this.context.drawImage(this.canvas2D,0,0);
+        this.context.drawImage(this.canvas3D, 0, 0);
+        this.context.drawImage(this.canvas2D, 0, 0);
         requestAnimationFrame(this.#loopRenderer.bind(this));
     }
 
@@ -157,6 +169,18 @@ export default class SHADE {
     
     run() {
         this.#resizeCanvas();
+
+        if(this.once3D == this.ST_once3D) {
+            this.fragment_shader = 
+                `precision highp float;
+                uniform vec2 iResolution;
+                uniform vec2 iMouse;
+                uniform float iTime;`
+            + this.fragment_shader +
+                `void main() {
+                    mainImage(gl_FragColor, gl_FragCoord.xy);
+                }`;
+        }
 
         this.once2D();
         this.once3D();

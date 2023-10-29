@@ -2,13 +2,15 @@ import SHADE from "../../src/SHADE.js";
 
 let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight'});
 
+// ShaderToy compatibility setup
+
+example.vertex_shader = example.ST_vertex_shader;
+example.once3D = example.ST_once3D;
+example.loop3D = example.ST_loop3D;
+
+//
+
 example.fragment_shader = `
-    precision highp float;
-
-    uniform vec2 iResolution;
-    uniform vec2 iMouse;
-    uniform float iTime;
-
     // https://www.shadertoy.com/view/3l23Rh
 
     mat2 rot(in float a){float c = cos(a), s = sin(a);return mat2(c,s,-s,c);}
@@ -132,14 +134,13 @@ example.fragment_shader = `
         fragColor = vec4( col, 1.0 );
     }
 
-    void main() {
-        mainImage(gl_FragColor, gl_FragCoord.xy);
-    }
 `;
 
 example.once2D = function() {
     this.context2D.fillStyle = 'rgba(0,0,0,.25)';
     this.context2D.fillRect(0, 0, this.canvas.width/2, this.canvas.height/2);
 }
+
+//
 
 example.run();
