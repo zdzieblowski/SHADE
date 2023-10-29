@@ -1,12 +1,6 @@
 import SHADE from "../../src/SHADE.js";
 
-let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight'});
-
-// ShaderToy compatibility setup
-
-example.vertex_shader = example.ST_vertex_shader;
-example.once3D = example.ST_once3D;
-example.loop3D = example.ST_loop3D;
+let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', is_shader_toy: true});
 
 //
 
@@ -133,7 +127,6 @@ example.fragment_shader = `
 
         fragColor = vec4( col, 1.0 );
     }
-
 `;
 
 example.once2D = function() {

@@ -5,6 +5,8 @@ const config_defaults = {
     alpha: true,
     antialias: false,
 
+    is_shader_toy: false,
+
     debug: false
 };
 
@@ -125,7 +127,9 @@ export default class SHADE {
             this.loop2D();
         }
 
-        this.loop3D();
+        if(this.loop3D.toString() != this.empty.toString()){
+            this.loop3D();
+        }
 
         this.time = performance.now();        
 
@@ -170,7 +174,12 @@ export default class SHADE {
     run() {
         this.#resizeCanvas();
 
-        if(this.once3D == this.ST_once3D) {
+        if(this.config.is_shader_toy == true) {
+
+            this.vertex_shader = this.ST_vertex_shader;
+            this.once3D = this.ST_once3D;
+            this.loop3D = this.ST_loop3D;
+
             this.fragment_shader = 
                 `precision highp float;
                 uniform vec2 iResolution;
