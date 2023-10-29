@@ -23,10 +23,7 @@ export default class SHADE {
     o3E = true;
     l2E = true;
     l3E = true;
-    
-    //
 
-    
     //
 
     fragment_shader = ``;
@@ -139,7 +136,7 @@ export default class SHADE {
 
         this.context.drawImage(this.canvas3D, 0, 0);
         this.context.drawImage(this.canvas2D, 0, 0);
-        
+
         if(!this.l2E || !this.l3E) {
             requestAnimationFrame(this.#loopRenderer.bind(this));
         }
@@ -149,7 +146,7 @@ export default class SHADE {
 
     createShader(shader_type, shader_source) {
         let shader = this.context3D.createShader(shader_type);
-        
+
         this.context3D.shaderSource(shader, shader_source);
         this.context3D.compileShader(shader);
 
@@ -206,9 +203,10 @@ export default class SHADE {
         this.o3E = this.once3D.toString() == this.empty.toString();
         this.l2E = this.loop2D.toString() == this.empty.toString();
         this.l3E = this.loop3D.toString() == this.empty.toString();
-                
+
         this.once2D();
         this.once3D();
+
         setTimeout(() => { this.#loopRenderer(); }, 100);
     }
 }
