@@ -12,16 +12,20 @@ const config_defaults = {
 
 export default class SHADE {
 
-    version = '0.3.4';
+    version = '0.3.5';
 
     mouseX = 0;
     mouseY = 0;
 
     time = performance.now();
 
+    o2E = true;
+    o3E = true;
+    l2E = true;
+    l3E = true;
+    
     //
 
-    ST_vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
     
     //
 
@@ -54,11 +58,11 @@ export default class SHADE {
             this.mouseY = event.changedTouches[0].clientY - this.bcr.top;
         }
 
-        window.onresize = event => {
-            this.#resizeCanvas();
-        }
+        window.onresize = event => { this.#resizeCanvas(); }
 
         // 
+
+        this.ST_vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
 
         this.ST_once3D = function() {
             this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
@@ -111,23 +115,23 @@ export default class SHADE {
 
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-        if(this.loop2D.toString() == this.empty.toString()) {
+        if(this.l2E) {
             this.once2D();
         }
 
-        if(this.loop3D.toString() == this.empty.toString()) {
+        if(this.l3E) {
             this.once3D();
         }
 
     }
 
     #loopRenderer() {
-        if(this.loop2D.toString() != this.empty.toString()){
+        if(!this.l2E){
             this.context2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.loop2D();
         }
 
-        if(this.loop3D.toString() != this.empty.toString()){
+        if(!this.l3E){
             this.loop3D();
         }
 
@@ -135,15 +139,18 @@ export default class SHADE {
 
         this.context.drawImage(this.canvas3D, 0, 0);
         this.context.drawImage(this.canvas2D, 0, 0);
-        requestAnimationFrame(this.#loopRenderer.bind(this));
+        
+        if(!this.l2E || !this.l3E) {
+            requestAnimationFrame(this.#loopRenderer.bind(this));
+        }
     }
 
     //
 
-    createShader(type, source) {
-        let shader = this.context3D.createShader(type);
+    createShader(shader_type, shader_source) {
+        let shader = this.context3D.createShader(shader_type);
         
-        this.context3D.shaderSource(shader, source);
+        this.context3D.shaderSource(shader, shader_source);
         this.context3D.compileShader(shader);
 
         if (this.context3D.getShaderParameter(shader, this.context3D.COMPILE_STATUS)) {
@@ -154,11 +161,11 @@ export default class SHADE {
         this.context3D.deleteShader(shader);
     }
 
-    createProgram(vertexShader, fragmentShader) {
+    createProgram(vertex_shader, fragment_shader) {
         let program = this.context3D.createProgram();
         
-        this.context3D.attachShader(program, vertexShader);
-        this.context3D.attachShader(program, fragmentShader);
+        this.context3D.attachShader(program, vertex_shader);
+        this.context3D.attachShader(program, fragment_shader);
         this.context3D.linkProgram(program);
         
         if (this.context3D.getProgramParameter(program, this.context3D.LINK_STATUS)) {
@@ -174,23 +181,32 @@ export default class SHADE {
     run() {
         this.#resizeCanvas();
 
+        //
+
         if(this.config.is_shader_toy == true) {
 
             this.vertex_shader = this.ST_vertex_shader;
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;
 
-            this.fragment_shader = 
-                `precision highp float;
+            this.fragment_shader = `
+                precision highp float;
                 uniform vec2 iResolution;
                 uniform vec2 iMouse;
                 uniform float iTime;`
-            + this.fragment_shader +
-                `void main() {
+            + this.fragment_shader + `
+                void main() {
                     mainImage(gl_FragColor, gl_FragCoord.xy);
                 }`;
         }
 
+        //
+
+        this.o2E = this.once2D.toString() == this.empty.toString();
+        this.o3E = this.once3D.toString() == this.empty.toString();
+        this.l2E = this.loop2D.toString() == this.empty.toString();
+        this.l3E = this.loop3D.toString() == this.empty.toString();
+                
         this.once2D();
         this.once3D();
         setTimeout(() => { this.#loopRenderer(); }, 100);
