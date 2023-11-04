@@ -46,18 +46,20 @@ export default class SHADE {
         // 
 
         this.canvas.onmousemove = event => {
-            if(!this.config.is_shadertoy || this.mouseZ != 0){
+            if(!this.config.is_shadertoy || this.mouseDown){
                 this.mouseX = event.clientX - this.bcr.left;
                 this.mouseY = event.clientY - this.bcr.top;
             }
         }
 
         this.canvas.onmousedown = event => {
+            this.mouseDown = true;
             this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
             this.mouseY = this.mouseW = event.clientY - this.bcr.top;
         }
 
         this.canvas.onmouseup = event => {
+            this.mouseDown = false;
             this.mouseZ = 0;
             this.mouseW = 0;
         }
@@ -198,6 +200,9 @@ export default class SHADE {
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;
 
+            this.mouseX = this.mouseZ = this.canvas.width/2;
+            this.mouseY = this.mouseW = this.canvas.height/2;
+
             this.fragment_shader = `
             precision highp float;
             
@@ -219,7 +224,6 @@ export default class SHADE {
         this.once2D();
         this.once3D();
 
-        // setTimeout(() => {  }, 0);
         this.#loopRenderer();
     }
 }

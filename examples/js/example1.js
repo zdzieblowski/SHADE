@@ -1,10 +1,10 @@
 import SHADE from "../../src/SHADE.js";
 
-let example = new SHADE('EXAMPLE', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true});
+let example = new SHADE('EXAMPLE1', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true});
 
 //
 
-example.fragment_shader = await example.loadShader('glsl/example.glsl');
+example.fragment_shader = await example.loadShader('glsl/example1.glsl');
 
 example.once2D = function() {
     this.context2D.fillStyle = 'rgba(0,0,0,.25)';
@@ -12,4 +12,5 @@ example.once2D = function() {
 }
 
 //
+
 example.run();
