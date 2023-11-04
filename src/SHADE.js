@@ -53,17 +53,15 @@ export default class SHADE {
                 this.mouseX = event.clientX - this.bcr.left;
                 this.mouseY = event.clientY - this.bcr.top;
             } else {
-                if(this.mouseDown){
-                    this.mouseX = event.clientX - this.bcr.left;
-                    this.mouseY = this.bcr.bottom - event.clientY;
-                }
+                this.mouseX = event.clientX - this.bcr.left;
+                this.mouseY = this.bcr.bottom - event.clientY;
             }
         }
 
         this.canvas.onmousedown = event => {
             this.mouseDown = true;
-            this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
-            this.mouseY = this.mouseW = event.clientY - this.bcr.top;
+            this.mouseZ = this.mouseX;
+            this.mouseW = this.mouseY;
         }
 
         this.canvas.onmouseup = event => {
