@@ -21,6 +21,7 @@ export default class SHADE {
     mouseDown = false;
 
     time = performance.now();
+    frame = 0;
 
     l2E = true;
     l3E = true;
@@ -53,8 +54,10 @@ export default class SHADE {
                 this.mouseX = event.clientX - this.bcr.left;
                 this.mouseY = event.clientY - this.bcr.top;
             } else {
-                this.mouseX = event.clientX - this.bcr.left;
-                this.mouseY = this.bcr.bottom - event.clientY;
+                if(this.mouseDown){
+                    this.mouseX = event.clientX - this.bcr.left;
+                    this.mouseY = this.bcr.bottom - event.clientY;
+                }
             }
         }
 
@@ -92,13 +95,16 @@ export default class SHADE {
             this.ST_canvasResolution = this.context3D.getUniformLocation(this.program, 'iResolution');
             this.ST_mousePosition = this.context3D.getUniformLocation(this.program, 'iMouse');
             this.ST_currentTime = this.context3D.getUniformLocation(this.program, 'iTime');
+            this.ST_currentFrame = this.context3D.getUniformLocation(this.program, 'iFrame');
         }
 
         this.ST_loop3D = function() {
             this.context3D.uniform3f(this.ST_canvasResolution, this.canvas.width, this.canvas.height, 1.0);
             this.context3D.uniform4f(this.ST_mousePosition, this.mouseX, this.mouseY, this.mouseZ, this.mouseW);
             this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
+            this.context3D.uniform1i(this.ST_currentFrame, this.frame);
             this.context3D.drawArrays(this.context3D.TRIANGLES, 0, this.vertexData.length/2);
+            this.frame ++;
         }
 
         //
@@ -214,6 +220,9 @@ export default class SHADE {
             this.loop3D = this.ST_loop3D;
 
             this.fragment_shader = `#version 300 es
+
+            #define HW_PERFORMANCE 1
+
             precision highp float;
             precision highp int;
             precision highp sampler2D;
@@ -223,6 +232,7 @@ export default class SHADE {
             uniform vec3 iResolution;
             uniform vec4 iMouse;
             uniform float iTime;
+            uniform int iFrame;
             `
             + this.fragment_shader + `
             void main() {
