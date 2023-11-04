@@ -2,8 +2,13 @@ const config_defaults = {
     width: 320,
     height: 240,
 
-    alpha: true,
+    alpha: false,
+    alpha2D: true,
+    alpha3D: false,
+
     antialias: false,
+    antialias2D: false,
+    antialias3D: false,
 
     is_shadertoy: false,
 
@@ -12,7 +17,7 @@ const config_defaults = {
 
 export default class SHADE {
 
-    version = '0.3.7';
+    version = '0.3.8';
 
     mouseX = 0;
     mouseY = 0;
@@ -42,10 +47,10 @@ export default class SHADE {
         // 
 
         this.canvas2D = new OffscreenCanvas(this.canvas.width, this.canvas.height);
-        this.context2D = this.canvas2D.getContext('2d', {antialias: true, alpha: true});
+        this.context2D = this.canvas2D.getContext('2d', {antialias: this.config.antialias2D, alpha: this.config.alpha2D});
 
         this.canvas3D = new OffscreenCanvas(this.canvas.width, this.canvas.height);
-        this.context3D = this.canvas3D.getContext('webgl2', {antialias: true, alpha: true});
+        this.context3D = this.canvas3D.getContext('webgl2', {antialias: this.config.antialias3D, alpha: this.config.alpha3D});
 
         // 
 
