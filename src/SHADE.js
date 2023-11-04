@@ -63,8 +63,8 @@ export default class SHADE {
 
         this.canvas.onmousedown = event => {
             this.mouseDown = true;
-            this.mouseZ = this.mouseX;
-            this.mouseW = this.mouseY;
+            this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
+            this.mouseY = this.mouseW = this.bcr.bottom - event.clientY;            
         }
 
         this.canvas.onmouseup = event => {
