@@ -18,6 +18,7 @@ export default class SHADE {
     mouseY = 0;
     mouseZ = 0;
     mouseW = 0;
+    mouseDown = false;
 
     time = performance.now();
 
@@ -48,9 +49,14 @@ export default class SHADE {
         // 
 
         this.canvas.onmousemove = event => {
-            if(!this.config.is_shadertoy || this.mouseDown){
+            if(!this.config.is_shadertoy) {
                 this.mouseX = event.clientX - this.bcr.left;
                 this.mouseY = event.clientY - this.bcr.top;
+            } else {
+                if(this.mouseDown){
+                    this.mouseX = event.clientX - this.bcr.left;
+                    this.mouseY = this.bcr.bottom - event.clientY;
+                }
             }
         }
 
@@ -124,8 +130,8 @@ export default class SHADE {
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         if(this.shadertoy) {
-            this.mouseX = this.mouseZ = this.canvas.width/2;
-            this.mouseY = this.mouseW = this.canvas.height/2;
+            this.mouseX = this.canvas.width/2;
+            this.mouseY = this.canvas.height/2;
         }
 
         if(this.l2E) {
