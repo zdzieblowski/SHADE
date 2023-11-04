@@ -35,6 +35,8 @@ export default class SHADE {
         this.canvas = document.getElementById(canvas_element);
         this.context = this.canvas.getContext('2d', {antialias: this.config.antialias, alpha: this.config.alpha})
         
+        this.shadertoy = this.config.is_shadertoy == true;
+
         // 
 
         this.canvas2D = new OffscreenCanvas(this.canvas.width, this.canvas.height);
@@ -121,6 +123,11 @@ export default class SHADE {
 
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
+        if(this.shadertoy) {
+            this.mouseX = this.mouseZ = this.canvas.width/2;
+            this.mouseY = this.mouseW = this.canvas.height/2;
+        }
+
         if(this.l2E) {
             this.once2D();
         }
@@ -194,14 +201,11 @@ export default class SHADE {
 
         //
 
-        if(this.config.is_shadertoy == true) {
-
+        if(this.shadertoy) {
+            
             this.vertex_shader = this.ST_vertex_shader;
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;
-
-            this.mouseX = this.mouseZ = this.canvas.width/2;
-            this.mouseY = this.mouseW = this.canvas.height/2;
 
             this.fragment_shader = `
             precision highp float;
