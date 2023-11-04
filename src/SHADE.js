@@ -74,7 +74,9 @@ export default class SHADE {
 
         // 
 
-        this.ST_vertex_shader = `attribute vec4 _vertices; void main() { gl_Position = _vertices; }`;
+        this.ST_vertex_shader = `#version 300 es
+        in vec4 _vertices;
+        void main() { gl_Position = _vertices; }`;
 
         this.ST_once3D = function() {
             this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
@@ -211,8 +213,12 @@ export default class SHADE {
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;
 
-            this.fragment_shader = `
+            this.fragment_shader = `#version 300 es
             precision highp float;
+            precision highp int;
+            precision highp sampler2D;
+
+            out vec4 outColor;
             
             uniform vec3 iResolution;
             uniform vec4 iMouse;
@@ -220,7 +226,9 @@ export default class SHADE {
             `
             + this.fragment_shader + `
             void main() {
-                mainImage(gl_FragColor, gl_FragCoord.xy);
+                vec4 color = vec4(1e20);
+                mainImage( color, gl_FragCoord.xy );
+                outColor = color;
             }`;
         }
 
