@@ -12,7 +12,7 @@ const config_defaults = {
 
 export default class SHADE {
 
-    version = '0.3.6';
+    version = '0.3.7';
 
     mouseX = 0;
     mouseY = 0;
@@ -151,6 +151,11 @@ export default class SHADE {
 
     //
 
+    async loadShader(shader_filename) {
+        let shader_data = await fetch(shader_filename);
+        return shader_data.text();
+    }
+
     createShader(shader_type, shader_source) {
         let shader = this.context3D.createShader(shader_type);
 
@@ -194,14 +199,16 @@ export default class SHADE {
             this.loop3D = this.ST_loop3D;
 
             this.fragment_shader = `
-                precision highp float;
-                uniform vec3 iResolution;
-                uniform vec4 iMouse;
-                uniform float iTime;`
+            precision highp float;
+            
+            uniform vec3 iResolution;
+            uniform vec4 iMouse;
+            uniform float iTime;
+            `
             + this.fragment_shader + `
-                void main() {
-                    mainImage(gl_FragColor, gl_FragCoord.xy);
-                }`;
+            void main() {
+                mainImage(gl_FragColor, gl_FragCoord.xy);
+            }`;
         }
 
         //
@@ -212,6 +219,7 @@ export default class SHADE {
         this.once2D();
         this.once3D();
 
-        setTimeout(() => { this.#loopRenderer(); }, 100);
+        // setTimeout(() => {  }, 0);
+        this.#loopRenderer();
     }
 }
