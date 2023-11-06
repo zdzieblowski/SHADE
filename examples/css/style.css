@@ -13,15 +13,17 @@ html, body {
 
 body {
     padding: var(--padding);
-    overflow-x: hidden;
+    overflow: hidden;
     background-color: #22272E;
 }
 
-img {
+.logo {
     margin-bottom: -4px;
+    height: 64px;
 }
 
 .example {
     margin-top: 10px;
     width: calc(100% - (2 * var(--padding)));
+    height: calc(100% - 64px - (2 * var(--padding)) - 10px);
 }
