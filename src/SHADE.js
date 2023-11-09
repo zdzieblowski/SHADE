@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.8';
+    version = '0.3.9';
 
     mouseX = 0;
     mouseY = 0;
@@ -81,7 +81,11 @@ export default class SHADE {
             this.mouseW = 0;
         }
 
-        window.onresize = event => { this.#resizeCanvas(); }
+        const resizeEvent = new ResizeObserver((entries) => {
+            this.#resizeCanvas();
+        });
+
+        resizeEvent.observe(this.canvas.parentElement);
 
         // 
 
@@ -112,7 +116,7 @@ export default class SHADE {
             this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
             this.context3D.uniform1i(this.ST_currentFrame, this.frame);
             this.context3D.drawArrays(this.context3D.TRIANGLES, 0, this.vertexData.length/2);
-            this.frame ++;
+            this.frame++;
         }
 
         //
@@ -139,6 +143,8 @@ export default class SHADE {
         this.canvas2D.width = this.canvas3D.width = this.canvas.width = this.#parseSize(this.config.width);
         this.canvas2D.height = this.canvas3D.height = this.canvas.height = this.#parseSize(this.config.height);
 
+        this.bcr = this.canvas.getBoundingClientRect();
+        
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         if(this.shadertoy) {
