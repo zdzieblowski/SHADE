@@ -13,7 +13,7 @@ html, body {
 
 body {
     padding: var(--padding);
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: #22272E;
 }
 

@@ -10,13 +10,14 @@ const config_defaults = {
     antialias2D: false,
     antialias3D: false,
 
+    api3D: 'webgl2',
+
     is_shadertoy: false,
 
     debug: false
 };
 
 export default class SHADE {
-
     version = '0.3.8';
 
     mouseX = 0;
@@ -50,11 +51,12 @@ export default class SHADE {
         this.context2D = this.canvas2D.getContext('2d', {antialias: this.config.antialias2D, alpha: this.config.alpha2D});
 
         this.canvas3D = new OffscreenCanvas(this.canvas.width, this.canvas.height);
-        this.context3D = this.canvas3D.getContext('webgl2', {antialias: this.config.antialias3D, alpha: this.config.alpha3D});
+        this.context3D = this.canvas3D.getContext(this.config.api3D, {antialias: this.config.antialias3D, alpha: this.config.alpha3D});
 
         // 
 
         this.canvas.onmousemove = event => {
+            this.bcr = this.canvas.getBoundingClientRect();
             if(!this.config.is_shadertoy) {
                 this.mouseX = event.clientX - this.bcr.left;
                 this.mouseY = event.clientY - this.bcr.top;
@@ -67,6 +69,7 @@ export default class SHADE {
         }
 
         this.canvas.onmousedown = event => {
+            this.bcr = this.canvas.getBoundingClientRect();
             this.mouseDown = true;
             this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
             this.mouseY = this.mouseW = this.bcr.bottom - event.clientY;            
@@ -136,8 +139,6 @@ export default class SHADE {
         this.canvas2D.width = this.canvas3D.width = this.canvas.width = this.#parseSize(this.config.width);
         this.canvas2D.height = this.canvas3D.height = this.canvas.height = this.#parseSize(this.config.height);
 
-        this.bcr = this.canvas.getBoundingClientRect()
-
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         if(this.shadertoy) {
@@ -152,7 +153,6 @@ export default class SHADE {
         if(this.l3E) {
             this.once3D();
         }
-
     }
 
     #loopRenderer() {
@@ -218,8 +218,7 @@ export default class SHADE {
 
         //
 
-        if(this.shadertoy) {
-            
+        if(this.shadertoy) {            
             this.vertex_shader = this.ST_vertex_shader;
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;

@@ -63,11 +63,3 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // maximum thickness is 2m in alpha channel
     fragColor = vec4(col, 1.0 - (depth - 0.5) / 2.0);
 }
-
-/** SHADERDATA
-{
-	"title": "My Shader 0",
-	"description": "Lorem ipsum dolor",
-	"model": "person"
-}
-*/
