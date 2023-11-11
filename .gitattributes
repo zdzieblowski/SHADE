@@ -1,1 +1,3 @@
-*.glslf linguist-vendored=false
+*.glslf linguist-detectable=true
+*.glslv linguist-detectable=true
+*.glsl linguist-detectable=true
