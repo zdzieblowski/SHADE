@@ -4,7 +4,7 @@ let example = new SHADE('EXAMPLE1', {width: 'maxWidth', height: 'maxHeight', is_
 
 //
 
-example.fragment_shader = await example.loadShader('glsl/example2.glslf');
+example.fragment_shader = await example.loadShader('glsl/example2.glsl');
 
 // example.once2D = function() {
 //     this.context2D.fillStyle = 'rgba(255,0,0,.25)';
