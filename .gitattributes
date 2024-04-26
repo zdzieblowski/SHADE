@@ -1,1 +1,1 @@
-examples/glsl/*.glsl linguist-language=GLSL linguist-detectable
+*.glsl linguist-language=GLSL linguist-detectable
