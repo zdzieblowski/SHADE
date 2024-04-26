@@ -1,1 +1,1 @@
-*.glsl linguist-detectable
+*.glsl linguist-language=GLSL linguist-detectable
