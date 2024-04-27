@@ -101,6 +101,31 @@ export default class SHADE {
         void main() { gl_Position = _vertices; }`;
 
         this.ST_once3D = function() {
+            this.fragment_shader = `#version 300 es
+
+            #define HW_PERFORMANCE 1
+
+            precision highp float;
+            precision highp int;
+            precision highp sampler2D;
+
+            out vec4 outColor;
+
+            uniform vec4 iDate;
+            uniform int iFrame;
+            uniform float iFrameRate;
+            uniform vec4 iMouse;
+            uniform vec3 iResolution;
+            uniform float iTime;
+            uniform float iTimeDelta;
+            `
+            + this.fragment_shader + `
+            void main() {
+                vec4 color = vec4(1e20);
+                mainImage( color, gl_FragCoord.xy );
+                outColor = color;
+            }`;
+            
             this.program = this.createProgram(this.createShader(this.context3D.VERTEX_SHADER, this.vertex_shader), this.createShader(this.context3D.FRAGMENT_SHADER, this.fragment_shader));
             this.context3D.useProgram(this.program);
             this.vertexData = [-1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, 1];
@@ -119,6 +144,19 @@ export default class SHADE {
         }
 
         this.ST_loop3D = function() {
+            this.mouseZ = Math.abs(this.mouseZ);
+            this.mouseW = Math.abs(this.mouseW);
+
+            if (!this.mouseDown) {
+                this.mouseZ = -this.mouseZ;
+            }
+
+            if (!this.mouseSignalDown) {
+                this.mouseW = -this.mouseW;
+            }
+
+            this.mouseSignalDown = false;
+
             let date = new Date();
             let delta = date - this.prev_date;
             this.context3D.uniform4f(this.ST_currentDate, date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() * 3600. + date.getMinutes() * 60. + date.getSeconds() + date.getMilliseconds() / 1000.))
@@ -160,8 +198,8 @@ export default class SHADE {
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.config.is_shadertoy) {
-            this.mouseX = this.canvas.width / 2;
-            this.mouseY = this.canvas.height / 2;
+            this.mouseX = 0;
+            this.mouseY = 0;
         }
 
         if (this.l2E) {
@@ -174,21 +212,6 @@ export default class SHADE {
     }
 
     #loopRenderer() {
-        if (this.config.is_shadertoy) {
-            this.mouseZ = Math.abs(this.mouseZ);
-            this.mouseW = Math.abs(this.mouseW);
-
-            if (!this.mouseDown) {
-                this.mouseZ = -this.mouseZ;
-            }
-
-            if (!this.mouseSignalDown) {
-                this.mouseW = -this.mouseW;
-            }
-
-            this.mouseSignalDown = false;
-        }
-
         if (!this.l2E) {
             this.context2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.loop2D();
@@ -255,31 +278,6 @@ export default class SHADE {
             this.vertex_shader = this.ST_vertex_shader;
             this.once3D = this.ST_once3D;
             this.loop3D = this.ST_loop3D;
-
-            this.fragment_shader = `#version 300 es
-
-            #define HW_PERFORMANCE 1
-
-            precision highp float;
-            precision highp int;
-            precision highp sampler2D;
-
-            out vec4 outColor;
-
-            uniform vec4 iDate;
-            uniform int iFrame;
-            uniform float iFrameRate;
-            uniform vec4 iMouse;
-            uniform vec3 iResolution;
-            uniform float iTime;
-            uniform float iTimeDelta;
-            `
-            + this.fragment_shader + `
-            void main() {
-                vec4 color = vec4(1e20);
-                mainImage( color, gl_FragCoord.xy );
-                outColor = color;
-            }`;
         }
 
         //
