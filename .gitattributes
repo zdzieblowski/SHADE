@@ -1,3 +1,4 @@
 examples/* linguist-detectable
+examples/css/* linguist-detectable
 examples/glsl/* linguist-detectable
 examples/js/* linguist-detectable
