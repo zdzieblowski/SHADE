@@ -1,11 +1,5 @@
 import SHADE from "../../src/SHADE.js";
 
-let example = new SHADE('EXAMPLE3', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true});
-
-//
-
+let example = new SHADE('EXAMPLE3', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true, metadata: import.meta});
 example.fragment_shader = await example.loadShader('glsl/example3.glsl');
-
-//
-
 example.run();

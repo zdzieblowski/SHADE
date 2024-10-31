@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.11';
+    version = '0.3.12';
 
     mouseX = 0;
     mouseY = 0;
@@ -38,10 +38,18 @@ export default class SHADE {
     fragment_shader = ``;
     vertex_shader = ``;
 
-    constructor(canvas_element, config_override) {
+    
+    constructor(canvas_id, config_override) {
         this.config = { ...config_defaults, ...config_override };
 
-        this.canvas = document.getElementById(canvas_element);
+        this.canvasElement = document.createElement("canvas");
+        this.canvasElement.setAttribute("id", canvas_id);
+
+        this.scriptURL = this.config.metadata.url;
+        this.scriptName = this.scriptURL.substring(this.scriptURL.lastIndexOf('/') + 1);
+        this.scriptElement = document.querySelectorAll('script[src*="'+this.scriptName+'"]')[0];
+
+        this.canvas = this.scriptElement.parentElement.insertBefore(this.canvasElement, this.scriptElement)
         this.context = this.canvas.getContext('2d', { antialias: this.config.antialias, alpha: this.config.alpha })
 
         // 
