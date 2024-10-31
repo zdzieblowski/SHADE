@@ -37,16 +37,16 @@ export default class SHADE {
 
     fragment_shader = ``;
     vertex_shader = ``;
-
     
-    constructor(canvas_id, config_override) {
+    constructor(canvas_id, config_override, metadata) {
+        console.log(this.__caller__);
+
         this.config = { ...config_defaults, ...config_override };
 
         this.canvasElement = document.createElement("canvas");
         this.canvasElement.setAttribute("id", canvas_id);
 
-        this.scriptURL = this.config.metadata.url;
-        this.scriptName = this.scriptURL.substring(this.scriptURL.lastIndexOf('/') + 1);
+        this.scriptName = metadata.url.substring(metadata.url.lastIndexOf('/') + 1);
         this.scriptElement = document.querySelectorAll('script[src*="'+this.scriptName+'"]')[0];
 
         this.canvas = this.scriptElement.parentElement.insertBefore(this.canvasElement, this.scriptElement)
