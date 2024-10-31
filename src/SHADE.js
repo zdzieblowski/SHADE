@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.11';
+    version = '0.3.14b';
 
     mouseX = 0;
     mouseY = 0;
@@ -30,8 +30,8 @@ export default class SHADE {
     frame = 0;
     prev_date = new Date();
 
-    l2E = true;
-    l3E = true;
+    l2E = false;
+    l3E = false;
 
     //
 
@@ -202,22 +202,22 @@ export default class SHADE {
             this.mouseY = 0;
         }
 
-        if (this.l2E) {
+        if (!this.l2E) {
             this.once2D();
         }
 
-        if (this.l3E) {
+        if (!this.l3E) {
             this.once3D();
         }
     }
 
     #loopRenderer() {
-        if (!this.l2E) {
+        if (this.l2E) {
             this.context2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.loop2D();
         }
 
-        if (!this.l3E) {
+        if (this.l3E) {
             this.loop3D();
         }
 
@@ -226,7 +226,7 @@ export default class SHADE {
         this.context.drawImage(this.canvas3D, 0, 0);
         this.context.drawImage(this.canvas2D, 0, 0);
 
-        if (!this.l2E || !this.l3E) {
+        if (this.l2E || this.l3E) {
             requestAnimationFrame(this.#loopRenderer.bind(this));
         }
     }
@@ -282,8 +282,8 @@ export default class SHADE {
 
         //
 
-        this.l2E = this.loop2D.toString() == this.empty.toString();
-        this.l3E = this.loop3D.toString() == this.empty.toString();
+        this.l2E = this.loop2D.toString() != this.empty.toString();
+        this.l3E = this.loop3D.toString() != this.empty.toString();
 
         this.once2D();
         this.once3D();
