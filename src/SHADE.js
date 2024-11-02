@@ -18,12 +18,9 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.14b';
+    version = '0.3.15';
 
-    mouseX = 0;
-    mouseY = 0;
-    mouseZ = 0;
-    mouseW = 0;
+    mouse = [0,0,0,0];
     mouseDown = false;
 
     time = performance.now();
@@ -57,12 +54,12 @@ export default class SHADE {
         this.canvas.onmousemove = event => {
             this.bcr = this.canvas.getBoundingClientRect();
             if (!this.config.is_shadertoy) {
-                this.mouseX = event.clientX - this.bcr.left;
-                this.mouseY = event.clientY - this.bcr.top;
+                this.mouse[0] = event.clientX - this.bcr.left;
+                this.mouse[1] = event.clientY - this.bcr.top;
             } else {
                 if (this.mouseDown) {
-                    this.mouseX = event.clientX - this.bcr.left;
-                    this.mouseY = this.bcr.bottom - event.clientY;
+                    this.mouse[0] = event.clientX - this.bcr.left;
+                    this.mouse[1] = this.bcr.bottom - event.clientY;
                 }
             }
         }
@@ -75,17 +72,16 @@ export default class SHADE {
                 this.mouseSignalDown = true;
             }
 
-            this.mouseX = this.mouseZ = event.clientX - this.bcr.left;
-            this.mouseY = this.mouseW = this.bcr.bottom - event.clientY;
+            this.mouse[0] = this.mouse[2] = event.clientX - this.bcr.left;
+            this.mouse[1] = this.mouse[3] = this.bcr.bottom - event.clientY;
         }
 
         this.canvas.onmouseup = event => {
             this.mouseDown = false;
             if (!this.config.is_shadertoy) {
-                this.mouseZ = 0;
-                this.mouseW = 0;
+                this.mouse[2] = 0;
+                this.mouse[3] = 0;
             }
-
         }
 
         const resizeEvent = new ResizeObserver((entries) => {
@@ -144,15 +140,15 @@ export default class SHADE {
         }
 
         this.ST_loop3D = function() {
-            this.mouseZ = Math.abs(this.mouseZ);
-            this.mouseW = Math.abs(this.mouseW);
+            this.mouse[2] = Math.abs(this.mouse[2]);
+            this.mouse[3] = Math.abs(this.mouse[3]);
 
             if (!this.mouseDown) {
-                this.mouseZ = -this.mouseZ;
+                this.mouse[2] = -this.mouse[2];
             }
 
             if (!this.mouseSignalDown) {
-                this.mouseW = -this.mouseW;
+                this.mouse[3] = -this.mouse[3];
             }
 
             this.mouseSignalDown = false;
@@ -162,7 +158,7 @@ export default class SHADE {
             this.context3D.uniform4f(this.ST_currentDate, date.getFullYear(), date.getMonth(), date.getDate(), (date.getHours() * 3600. + date.getMinutes() * 60. + date.getSeconds() + date.getMilliseconds() / 1000.))
             this.context3D.uniform1i(this.ST_currentFrame, this.frame);
             this.context3D.uniform1f(this.ST_currentFrameRate, 1000. / delta);
-            this.context3D.uniform4f(this.ST_mousePosition, this.mouseX, this.mouseY, this.mouseZ, this.mouseW);
+            this.context3D.uniform4f(this.ST_mousePosition, this.mouse[0], this.mouse[1], this.mouse[2], this.mouse[3]);
             this.context3D.uniform3f(this.ST_canvasResolution, this.canvas.width, this.canvas.height, 1.0);
             this.context3D.uniform1f(this.ST_currentTime, this.time * 0.001);
             this.context3D.uniform1f(this.ST_currentTimeDelta, delta * 0.001);
@@ -198,8 +194,8 @@ export default class SHADE {
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
         if (this.config.is_shadertoy) {
-            this.mouseX = 0;
-            this.mouseY = 0;
+            this.mouse[0] = 0;
+            this.mouse[1] = 0;
         }
 
         if (!this.l2E) {
