@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.3.15';
+    version = '0.3.16';
 
     mouse = [0,0,0,0];
     mouseDown = false;
@@ -285,5 +285,24 @@ export default class SHADE {
         this.once3D();
 
         this.#loopRenderer();
+
+        console.info('\n%cSHADE%cv' + this.version + '%cid: ' + this.canvas.id + '%c\n\n' +
+            (this.config.debug ?
+                ' CONFIGURATION\n\n' +
+                ' └ config.width        : ' + this.config.width + '\n' +
+                ' └ config.height       : ' + this.config.height + '\n' +
+                ' └ config.alpha        : ' + this.config.alpha + ', ' + this.config.alpha2D + ', ' + this.config.alpha3D + '\n' +
+                ' └ config.antialias    : ' + this.config.antialias + ', ' + this.config.antialias2D + ', ' + this.config.antialias3D + '\n' +
+                ' └ config.api3D        : ' + this.config.api3D+'\n' +
+                ' └ config.is_shadertoy : ' + this.config.is_shadertoy + '\n\n' +
+                ' CANVAS\n\n'+
+                ' └ canvas.width        : ' + this.canvas.width+'px\n' +
+                ' └ canvas.height       : ' + this.canvas.height+'px\n' +
+            '\n' : ''),
+            'background-color: #ff8811; color: #222222; border-radius: 4px 0px 0px 4px; font-weight: 900; padding: 4px 8px 4px 8px;',
+            'background-color: #333333; color: #dddddd; padding: 4px 8px 4px 8px;',
+            'background-color: #888888; color: #000000; border-radius: 0px 4px 4px 0px; padding: 4px 8px 4px 8px;',
+            ''
+        );
     }
 }
