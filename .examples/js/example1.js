@@ -1,17 +1,26 @@
-import SHADE from "../../src/SHADE.js";
+import Shadertoy from '../../src/presets/ShaderToy.js';
+import SHADE from '../../src/SHADE.js';
 
-let example = new SHADE('EXAMPLE1', {width: 'maxWidth', height: 'maxHeight', is_shadertoy: true, debug: true});
+let example = new SHADE('EXAMPLE1', {width: 'maxWidth', height: 'maxHeight', preset: Shadertoy, debug: true});
 
 //
 
 example.fragment_shader = await example.loadShader('glsl/example2.glsl');
 
-// example.once2D = function() {
-//     this.context2D.fillStyle = 'rgba(255,0,0,.25)';
-//     this.context2D.fillRect(0, 0, this.canvas.width/2, this.canvas.height/2);
-//     this.context2D.fillStyle = 'rgba(0,255,0,.25)';
-//     this.context2D.fillRect(this.canvas.width/2, this.canvas.height/2, this.canvas.width, this.canvas.height);
-// }
+let xxx = 0;
+
+example.loop2D = function() {
+    if(xxx+1<255) {
+    xxx = xxx + 1;
+    }
+    else {
+        xxx=0;
+    }
+    this.context2D.fillStyle = 'rgba('+xxx+',0,0,.25)';
+    this.context2D.fillRect(0, 0, example.mouse[0], this.canvas.height-example.mouse[1]);
+    this.context2D.fillStyle = 'rgba(0,'+(255-xxx)+',0,.25)';
+    this.context2D.fillRect(example.mouse[0], this.canvas.height-example.mouse[1], this.canvas.width, this.canvas.height);
+}
 
 //
 
