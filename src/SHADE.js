@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.4.0';
+    version = '0.4.1';
 
     mouse = [0, 0, 0, 0];
     mouseDown = false;
@@ -61,8 +61,8 @@ export default class SHADE {
             this.bcr = this.canvas.getBoundingClientRect();
             this.mouseDown = true;
 
-            this.mouse[0] = this.mouse[2] = event.clientX - this.bcr.left;
-            this.mouse[1] = this.mouse[3] = this.bcr.bottom - event.clientY;
+            this.mouse[0] = event.clientX - this.bcr.left;
+            this.mouse[1] = this.bcr.bottom - event.clientY;
         }
 
         this.canvas.onmouseup = event => {
@@ -203,23 +203,25 @@ export default class SHADE {
 
         this.#loopRenderer();
 
-        console.info('\n%cSHADE%cv' + this.version + '%cid: ' + this.canvas.id + '%c\n\n' +
+        console.info('\n%cSHADE%c≡%cv ' + this.version + '%cid: ' + this.canvas.id + '%c\n\n' +
             (this.config.debug ?
-                ' CONFIGURATION\n\n' +
+                ' %cCONFIGURATION%c\n\n' +
                 ' └ config.width        : ' + this.config.width + '\n' +
                 ' └ config.height       : ' + this.config.height + '\n' +
                 ' └ config.alpha        : ' + this.config.alpha + ', ' + this.config.alpha2D + ', ' + this.config.alpha3D + '\n' +
                 ' └ config.antialias    : ' + this.config.antialias + ', ' + this.config.antialias2D + ', ' + this.config.antialias3D + '\n' +
                 ' └ config.api3D        : ' + this.config.api3D + '\n' +
                 ' └ config.preset       : ' + (this.preset ? this.config.preset.name : 'NO PRESET') + '\n\n' +
-                ' CANVAS\n\n' +
+                ' %cCANVAS%c\n\n' +
                 ' └ canvas.width        : ' + this.canvas.width + 'px\n' +
                 ' └ canvas.height       : ' + this.canvas.height + 'px\n' +
-                '\n' : ''),
-            'background-color: #ff8811; color: #222222; border-radius: 4px 0px 0px 4px; font-weight: 900; padding: 4px 8px 4px 8px;',
+                '\n' : '%c%c%c%c'),
+            'background-color: #dddddd; color: #333333; padding: 4px 8px 4px 8px;border-radius: 4px 0px 0px 4px; font-weight: 900; padding: 4px 8px 4px 8px;',
+            'background-color: hsla('+(Math.random() * 360)+', '+(25 + (Math.random() * 25))+'%, '+(25 + (Math.random() * 25))+'%, 1); color: #dddddd; padding: 4px 8px 4px 8px;',
             'background-color: #333333; color: #dddddd; padding: 4px 8px 4px 8px;',
-            'background-color: #888888; color: #000000; border-radius: 0px 4px 4px 0px; padding: 4px 8px 4px 8px;',
-            ''
+            'background-color: #888888; color: #000000; border-radius: 0px 4px 4px 0px; padding: 4px 8px 4px 8px;','',
+            'background-color: #999999; color: #111111; border-radius: 4px; padding: 4px 8px 4px 8px;','',
+            'background-color: #999999; color: #111111; border-radius: 4px; padding: 4px 8px 4px 8px;',''
         );
     }
 }

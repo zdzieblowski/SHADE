@@ -5,7 +5,7 @@ let example = new SHADE('EXAMPLE2', {width: 'maxWidth', height: 'maxHeight', pre
 
 //
 
-example.fragment_shader = await example.loadShader('glsl/example1.glsl');
+example.fragment_shader = await example.loadShader('glsl/example2.glsl');
 
 //
 
