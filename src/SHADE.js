@@ -18,7 +18,7 @@ const config_defaults = {
 };
 
 export default class SHADE {
-    version = '0.4.1';
+    version = '0.4.2';
 
     mouse = [0, 0, 0, 0];
     mouseDown = false;
@@ -203,6 +203,12 @@ export default class SHADE {
 
         this.#loopRenderer();
 
+        //
+
+        this.style__debug_padding = 'padding: 4px 8px;';
+        this.style__debug_section_colors = 'background-color: #999999; color: #111111;';
+        this.style__debug_section = this.style__debug_section_colors+'border-radius: 4px;'+this.style__debug_padding;
+
         console.info('\n%cSHADE%c≡%cv ' + this.version + '%cid: ' + this.canvas.id + '%c\n\n' +
             (this.config.debug ?
                 ' %cCONFIGURATION%c\n\n' +
@@ -216,12 +222,11 @@ export default class SHADE {
                 ' └ canvas.width        : ' + this.canvas.width + 'px\n' +
                 ' └ canvas.height       : ' + this.canvas.height + 'px\n' +
                 '\n' : '%c%c%c%c'),
-            'background-color: #dddddd; color: #333333; padding: 4px 8px 4px 8px;border-radius: 4px 0px 0px 4px; font-weight: 900; padding: 4px 8px 4px 8px;',
-            'background-color: hsla('+(Math.random() * 360)+', '+(25 + (Math.random() * 25))+'%, '+(25 + (Math.random() * 25))+'%, 1); color: #dddddd; padding: 4px 8px 4px 8px;',
-            'background-color: #333333; color: #dddddd; padding: 4px 8px 4px 8px;',
-            'background-color: #888888; color: #000000; border-radius: 0px 4px 4px 0px; padding: 4px 8px 4px 8px;','',
-            'background-color: #999999; color: #111111; border-radius: 4px; padding: 4px 8px 4px 8px;','',
-            'background-color: #999999; color: #111111; border-radius: 4px; padding: 4px 8px 4px 8px;',''
+            'background-color: #dddddd; color: #333333; border-radius: 4px 0px 0px 4px; font-weight: 900;'+this.style__debug_padding,
+            'background-color: hsla('+(Math.random() * 360)+', '+(25 + (Math.random() * 25))+'%, '+(25 + (Math.random() * 25))+'%, 1); color: #dddddd;'+this.style__debug_padding,
+            'background-color: #333333; color: #dddddd;'+this.style__debug_padding,
+            this.style__debug_section_colors+'border-radius: 0px 4px 4px 0px;'+this.style__debug_padding,
+            '',this.style__debug_section,'',this.style__debug_section,''
         );
     }
 }

@@ -1,5 +1,5 @@
-import Shadertoy from '../../src/presets/ShaderToy.js';
 import SHADE from '../../src/SHADE.js';
+import Shadertoy from '../../src/presets/ShaderToy.js';
 
 let example = new SHADE('EXAMPLE1', {width: 'maxWidth', height: 'maxHeight', preset: Shadertoy, debug: true});
 
