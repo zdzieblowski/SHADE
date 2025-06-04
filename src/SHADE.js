@@ -57,8 +57,8 @@ export default class SHADE {
         }
 
         this.canvas.onmousedown = event => {
+            this.updateBCR();
             this.mouseDown = true;
-
             this.mouse[0] = event.clientX - this.bcr.left;
             this.mouse[1] = event.clientY - this.bcr.top;
         }
@@ -66,13 +66,14 @@ export default class SHADE {
         //
 
         this.canvas.ontouchmove = event => {
+            event.preventDefault();
             this.mouse[0] = event.changedTouches[0].clientX - this.bcr.left;
             this.mouse[1] = event.changedTouches[0].clientY - this.bcr.top;
         }
 
         this.canvas.ontouchstart = event => {
+            this.updateBCR();
             this.mouseDown = true;
-
             this.mouse[0] = event.changedTouches[0].clientX - this.bcr.left;
             this.mouse[1] = event.changedTouches[0].clientY - this.bcr.top;
         }
@@ -152,7 +153,7 @@ export default class SHADE {
         this.canvas2D.width = this.canvas3D.width = this.canvas.width = this.#parseSize(this.config.width);
         this.canvas2D.height = this.canvas3D.height = this.canvas.height = this.#parseSize(this.config.height);
 
-        this.bcr = this.canvas.getBoundingClientRect();
+        this.updateBCR();
 
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
@@ -168,7 +169,7 @@ export default class SHADE {
             this.once3D();
         }
     }
-    
+
     //
 
     createShader(shader_type, shader_source) {
@@ -203,6 +204,10 @@ export default class SHADE {
     async loadShader(shader_filename) {
         let shader_data = await fetch(shader_filename);
         return shader_data.text();
+    }
+
+    updateBCR() {
+        this.bcr = this.canvas.getBoundingClientRect();
     }
 
     //

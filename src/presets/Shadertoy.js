@@ -95,12 +95,14 @@ export default class Shadertoy {
         // 
         SHADE.canvas.onmousemove = event => {
             if (SHADE.mouseDown) {
+                SHADE.updateBCR();
                 SHADE.mouse[0] = event.clientX - SHADE.bcr.left;
                 SHADE.mouse[1] = SHADE.bcr.bottom - event.clientY;
             }
         }
         //
         SHADE.canvas.onmousedown = event => {
+            SHADE.updateBCR();
             SHADE.mouseDown = true;
 
             SHADE.mouse[0] = SHADE.mouse[2] = event.clientX - SHADE.bcr.left;
@@ -108,13 +110,16 @@ export default class Shadertoy {
         }
         //
         SHADE.canvas.ontouchmove = event => {
+            event.preventDefault();
             if (SHADE.mouseDown) {
+                SHADE.updateBCR();
                 SHADE.mouse[0] = event.changedTouches[0].clientX - SHADE.bcr.left;
                 SHADE.mouse[1] = SHADE.bcr.bottom - event.changedTouches[0].clientY;
             }
         }
         //
         SHADE.canvas.ontouchstart = event => {
+            SHADE.updateBCR();
             SHADE.mouseDown = true;
 
             SHADE.mouse[0] = SHADE.mouse[2] = event.changedTouches[0].clientX - SHADE.bcr.left;
