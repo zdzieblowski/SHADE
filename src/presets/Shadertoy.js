@@ -91,10 +91,9 @@ export default class Shadertoy {
             SHADE.mouse[1] = 0;
         }
         //
-        // MOUSE EVENTS
+        // INPUT EVENTS
         // 
         SHADE.canvas.onmousemove = event => {
-            SHADE.bcr = SHADE.canvas.getBoundingClientRect();
             if (SHADE.mouseDown) {
                 SHADE.mouse[0] = event.clientX - SHADE.bcr.left;
                 SHADE.mouse[1] = SHADE.bcr.bottom - event.clientY;
@@ -102,16 +101,27 @@ export default class Shadertoy {
         }
         //
         SHADE.canvas.onmousedown = event => {
-            SHADE.bcr = SHADE.canvas.getBoundingClientRect();
             SHADE.mouseDown = true;
-
-            SHADE.mouseSignalDown = true;
 
             SHADE.mouse[0] = SHADE.mouse[2] = event.clientX - SHADE.bcr.left;
             SHADE.mouse[1] = SHADE.mouse[3] = SHADE.bcr.bottom - event.clientY;
         }
         //
-        SHADE.canvas.onmouseup = event => {
+        SHADE.canvas.ontouchmove = event => {
+            if (SHADE.mouseDown) {
+                SHADE.mouse[0] = event.changedTouches[0].clientX - SHADE.bcr.left;
+                SHADE.mouse[1] = SHADE.bcr.bottom - event.changedTouches[0].clientY;
+            }
+        }
+        //
+        SHADE.canvas.ontouchstart = event => {
+            SHADE.mouseDown = true;
+
+            SHADE.mouse[0] = SHADE.mouse[2] = event.changedTouches[0].clientX - SHADE.bcr.left;
+            SHADE.mouse[1] = SHADE.mouse[3] = SHADE.bcr.bottom - event.changedTouches[0].clientY;
+        }
+        //
+        SHADE.canvas.ontouchend = SHADE.canvas.onmouseup = event => {
             SHADE.mouseDown = false;
             SHADE.mouse[2] = 0;
             SHADE.mouse[3] = 0;

@@ -52,20 +52,34 @@ export default class SHADE {
         // 
 
         this.canvas.onmousemove = event => {
-            this.bcr = this.canvas.getBoundingClientRect();
-                this.mouse[0] = event.clientX - this.bcr.left;
-                this.mouse[1] = event.clientY - this.bcr.top;
+            this.mouse[0] = event.clientX - this.bcr.left;
+            this.mouse[1] = event.clientY - this.bcr.top;
         }
 
         this.canvas.onmousedown = event => {
-            this.bcr = this.canvas.getBoundingClientRect();
             this.mouseDown = true;
 
             this.mouse[0] = event.clientX - this.bcr.left;
-            this.mouse[1] = this.bcr.bottom - event.clientY;
+            this.mouse[1] = event.clientY - this.bcr.top;
         }
 
-        this.canvas.onmouseup = event => {
+        //
+
+        this.canvas.ontouchmove = event => {
+            this.mouse[0] = event.changedTouches[0].clientX - this.bcr.left;
+            this.mouse[1] = event.changedTouches[0].clientY - this.bcr.top;
+        }
+
+        this.canvas.ontouchstart = event => {
+            this.mouseDown = true;
+
+            this.mouse[0] = event.changedTouches[0].clientX - this.bcr.left;
+            this.mouse[1] = event.changedTouches[0].clientY - this.bcr.top;
+        }
+
+        //
+
+        this.canvas.onmouseup = this.canvas.ontouchend = event => {
             this.mouseDown = false;
         }
 
