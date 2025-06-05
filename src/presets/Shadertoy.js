@@ -104,7 +104,6 @@ export default class Shadertoy {
         SHADE.canvas.onmousedown = event => {
             SHADE.updateBCR();
             SHADE.mouseDown = true;
-
             SHADE.mouse[0] = SHADE.mouse[2] = event.clientX - SHADE.bcr.left;
             SHADE.mouse[1] = SHADE.mouse[3] = SHADE.bcr.bottom - event.clientY;
         }
@@ -113,8 +112,8 @@ export default class Shadertoy {
             event.preventDefault();
             if (SHADE.mouseDown) {
                 SHADE.updateBCR();
-                SHADE.mouse[0] = event.changedTouches[0].clientX - SHADE.bcr.left;
-                SHADE.mouse[1] = SHADE.bcr.bottom - event.changedTouches[0].clientY;
+                SHADE.mouse[0] = Math.min(Math.max(event.changedTouches[0].clientX - SHADE.bcr.left, 0), SHADE.bcr.width);
+                SHADE.mouse[1] = Math.min(Math.max(SHADE.bcr.bottom - event.changedTouches[0].clientY, 0), SHADE.bcr.height);
             }
         }
         //

@@ -67,8 +67,8 @@ export default class SHADE {
 
         this.canvas.ontouchmove = event => {
             event.preventDefault();
-            this.mouse[0] = event.changedTouches[0].clientX - this.bcr.left;
-            this.mouse[1] = event.changedTouches[0].clientY - this.bcr.top;
+            this.mouse[0] = Math.min(Math.max(event.changedTouches[0].clientX - this.bcr.left, 0), this.bcr.width);
+            this.mouse[1] = Math.min(Math.max(event.changedTouches[0].clientY - this.bcr.top, 0), this.bcr.height);
         }
 
         this.canvas.ontouchstart = event => {
