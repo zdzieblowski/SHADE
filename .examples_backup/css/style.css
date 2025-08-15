@@ -1,0 +1,28 @@
+:root {
+    --padding: 20px;
+}
+
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+
+body {
+    padding: var(--padding);
+    overflow-x: hidden;
+    background-color: #22272E;
+}
+
+.logo {
+    margin-bottom: -4px;
+    height: 64px;
+}
+
+.example {
+    margin-top: 10px;
+    width: calc(100% - (2 * var(--padding)));
+    height: 480px;
+}

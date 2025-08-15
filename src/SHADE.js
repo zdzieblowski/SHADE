@@ -13,12 +13,14 @@ const config_defaults = {
     api3D: 'webgl2',
 
     preset: null,
+    helpers2D: null,
+    helpers3D: null,
 
     debug: false
 };
 
 export default class SHADE {
-    version = '0.4.2';
+    version = '0.5.0';
 
     mouse = [0, 0, 0, 0];
     mouseDown = false;
@@ -30,6 +32,8 @@ export default class SHADE {
     l2E = false;
     l3E = false;
 
+    animation;
+    ready = false;
     //
 
     fragment_shader = ``;
@@ -86,7 +90,7 @@ export default class SHADE {
 
         //
 
-        const resizeEvent = new ResizeObserver((entries) => {
+        const resizeEvent = new ResizeObserver(() => {
             this.#resizeCanvas();
         });
 
@@ -103,23 +107,32 @@ export default class SHADE {
         if (this.config.preset) {
             this.preset = new this.config.preset(this);
         }
+
+        if (this.config.helpers2D) {
+            this.helpers2D = new this.config.helpers2D(this);
+        }
+
+        if (this.config.helpers3D) {
+            this.helpers3D = new this.config.helpers3D(this);
+        }
     }
 
     //
 
     #applyPreset() {
-        if(this.preset){
+        if (this.preset) {
             this.fragment_shader = this.fragment_shader == '' ? this.preset.fragment_shader : this.fragment_shader;
             this.vertex_shader = this.vertex_shader == '' ? this.preset.vertex_shader : this.vertex_shader;
 
             this.once2D = this.once2D.toString() == this.empty.toString() ? this.preset.once2D : this.once2D;
             this.loop2D = this.loop2D.toString() == this.empty.toString() ? this.preset.loop2D : this.loop2D;
-            this.l2E = this.loop2D.toString() != this.empty.toString() ? true : false;
 
             this.once3D = this.once3D.toString() == this.empty.toString() ? this.preset.once3D : this.once3D;
             this.loop3D = this.loop3D.toString() == this.empty.toString() ? this.preset.loop3D : this.loop3D;
-            this.l3E = this.loop3D.toString() != this.empty.toString() ? true : false;
         }
+
+        this.l2E = this.loop2D.toString() != this.empty.toString();
+        this.l3E = this.loop3D.toString() != this.empty.toString();
     }
 
     #parseSize(input) {
@@ -144,9 +157,11 @@ export default class SHADE {
         this.context.drawImage(this.canvas3D, 0, 0);
         this.context.drawImage(this.canvas2D, 0, 0);
 
-        if (this.l2E || this.l3E) {
-            requestAnimationFrame(this.#loopRenderer.bind(this));
+        if (!this.l2E && !this.l3E) {
+            cancelAnimationFrame(this.animation);
         }
+
+        this.animation = requestAnimationFrame(this.#loopRenderer.bind(this));
     }
 
     #resizeCanvas() {
@@ -157,17 +172,40 @@ export default class SHADE {
 
         this.context3D.viewport(0, 0, this.canvas.width, this.canvas.height);
 
-        if(this.preset) {
+        if (this.preset) {
             this.preset.onResize();
         }
 
-        if (!this.l2E) {
-            this.once2D();
+        if (!this.l2E || !this.l3E) {
+            if (!this.l2E) {
+                this.#_once2D();
+            }
+
+            if (!this.l3E) {
+                this.#_once3D();
+            }
+        }
+        if (!this.l2E && !this.l3E) {
+            this.#loopRenderer();
+        }
+    }
+
+    #_once2D() {
+        this.once2D();
+        // console.log('l2: ' + (this.l2E == false && this.l3E == false));
+        if (this.l2E == false && this.l3E == false) {
+            setTimeout(() => { cancelAnimationFrame(this.animation) }, 100);
         }
 
-        if (!this.l3E) {
-            this.once3D();
+    }
+
+    #_once3D() {
+        this.once3D();
+        // console.log('l3: ' + (this.l2E == false && this.l3E == false));
+        if (this.l2E == false && this.l3E == false) {
+            setTimeout(() => { cancelAnimationFrame(this.animation) }, 100);
         }
+
     }
 
     //
@@ -201,32 +239,33 @@ export default class SHADE {
         this.context3D.deleteProgram(program);
     }
 
-    async loadShader(shader_filename) {
-        let shader_data = await fetch(shader_filename);
-        return shader_data.text();
-    }
-
     updateBCR() {
         this.bcr = this.canvas.getBoundingClientRect();
     }
 
     //
 
-    run() {
-        this.#resizeCanvas();
+    async loadShader(shader_filename) {
+        let shader_data = await fetch(shader_filename);
+        return shader_data.text();
+    }
 
+    //
+
+    run() {
         this.#applyPreset();
 
-        this.once2D();
-        this.once3D();
+        this.#_once2D();
+        this.#_once3D();
 
         this.#loopRenderer();
+        this.ready = true;
 
         //
 
         this.style__debug_padding = 'padding: 4px 8px;';
         this.style__debug_section_colors = 'background-color: #999999; color: #111111;';
-        this.style__debug_section = this.style__debug_section_colors+'border-radius: 4px;'+this.style__debug_padding;
+        this.style__debug_section = this.style__debug_section_colors + 'border-radius: 4px;' + this.style__debug_padding;
 
         console.info('\n%cSHADE%c≡%cv ' + this.version + '%cid: ' + this.canvas.id + '%c\n\n' +
             (this.config.debug ?
@@ -236,16 +275,19 @@ export default class SHADE {
                 ' └ config.alpha        : ' + this.config.alpha + ', ' + this.config.alpha2D + ', ' + this.config.alpha3D + '\n' +
                 ' └ config.antialias    : ' + this.config.antialias + ', ' + this.config.antialias2D + ', ' + this.config.antialias3D + '\n' +
                 ' └ config.api3D        : ' + this.config.api3D + '\n' +
-                ' └ config.preset       : ' + (this.preset ? this.config.preset.name : 'NO PRESET') + '\n\n' +
+                ' └ config.preset       : ' + (this.preset ? this.config.preset.name : '-') + '\n' +
+                ' └ config.helpers2D    : ' + (this.helpers2D ? this.config.helpers2D.name : '-') + '\n' +
+                ' └ config.helpers3D    : ' + (this.helpers3D ? this.config.helpers3D.name : '-') + '\n\n' +
+                ' └ config.loops        : ' + this.l2E + ', ' + this.l3E + '\n\n' +
                 ' %cCANVAS%c\n\n' +
                 ' └ canvas.width        : ' + this.canvas.width + 'px\n' +
                 ' └ canvas.height       : ' + this.canvas.height + 'px\n' +
                 '\n' : '%c%c%c%c'),
-            'background-color: #dddddd; color: #333333; border-radius: 4px 0px 0px 4px; font-weight: 900;'+this.style__debug_padding,
-            'background-color: hsla('+(Math.random() * 360)+', '+(25 + (Math.random() * 25))+'%, '+(25 + (Math.random() * 25))+'%, 1); color: #dddddd;'+this.style__debug_padding,
-            'background-color: #333333; color: #dddddd;'+this.style__debug_padding,
-            this.style__debug_section_colors+'border-radius: 0px 4px 4px 0px;'+this.style__debug_padding,
-            '',this.style__debug_section,'',this.style__debug_section,''
+            'background-color: #dddddd; color: #333333; border-radius: 4px 0px 0px 4px; font-weight: 900;' + this.style__debug_padding,
+            'background-color: hsla(' + (Math.random() * 360) + ', ' + (25 + (Math.random() * 25)) + '%, ' + (25 + (Math.random() * 25)) + '%, 1); color: #dddddd;' + this.style__debug_padding,
+            'background-color: #333333; color: #dddddd;' + this.style__debug_padding,
+            this.style__debug_section_colors + 'border-radius: 0px 4px 4px 0px;' + this.style__debug_padding,
+            '', this.style__debug_section, '', this.style__debug_section, ''
         );
     }
 }

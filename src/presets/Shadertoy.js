@@ -9,7 +9,7 @@ export default class Shadertoy {
         in vec4 _vertices;
         void main() { gl_Position = _vertices; }`;
         // 
-        this.once2D = function () { };
+        this.once2D = function () { }
         // 
         this.once3D = function () {
             this.fragment_shader = `#version 300 es
@@ -54,7 +54,7 @@ export default class Shadertoy {
             this.ST_currentTimeDelta = this.context3D.getUniformLocation(this.program, 'iTimeDelta');
         }
         //
-        this.loop2D = function () { };
+        this.loop2D = function () { }
         //
         this.loop3D = function () {
             this.mouse[2] = Math.abs(this.mouse[2]);

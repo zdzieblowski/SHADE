@@ -1,28 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
 :root {
-    --padding: 20px;
+    --null: 0;
 }
 
 html, body {
     width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     border: 0;
 }
 
-
 body {
-    padding: var(--padding);
-    overflow-x: hidden;
+    font-family: "Silkscreen", sans-serif;
+    font-weight: 400;
+    font-size: 8px;
+    color: #ADBAC7;
+    overflow: hidden;
     background-color: #22272E;
 }
 
-.logo {
-    margin-bottom: -4px;
-    height: 64px;
+b {
+    font-weight: 700;
+}
+
+.link {
+    background-color: #ADBAC7;
+    color: #22272E;
+    padding: 8px 8px 8px 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    margin-left: 18px;
+    line-height: 1;
+}
+
+.link:hover {
+    background-color: #353d47;
+    color: #ADBAC7;
+    margin-left: 27px;
+}
+
+.link:active {
+    background-color: #22272E;
+    margin-left: 36px;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 200px auto;
+    width: 100%;
+    height: 100%;
+}
+
+.navigation {
+    padding: 8px;
+    display: grid;
+    grid-auto-rows: min-content;
+    gap: 8px;
 }
 
 .example {
-    margin-top: 10px;
-    width: calc(100% - (2 * var(--padding)));
-    height: 480px;
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    margin-top: 25px;
+}
+
+.example div {
+    width: calc(100% - 8px);
+    height: calc(100% - 33px);
+}
+
+.example div canvas {
+    border-radius: 3px;
 }
